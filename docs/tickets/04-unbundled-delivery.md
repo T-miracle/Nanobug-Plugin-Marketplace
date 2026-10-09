@@ -1,10 +1,10 @@
 # 04：取消随附、移除示例并完成 Windows 交付验收
 
-状态：拆分及阻塞关系已获用户批准，待发布本仓库；尚未实施。稳定标识：`plugin-marketplace-v1-04`。
+状态：ready-for-agent，已发布为 [#5](https://github.com/T-miracle/Nanobug-Plugin-Marketplace/issues/5)；尚未实施。稳定标识：`plugin-marketplace-v1-04`。
 
 ## Parent
 
-[执行规格](../specs/plugin-marketplace.md)（本仓库议题待发布；原 Nanobug #100 仅作历史参考）。
+[规格 #1：初版插件市场与官方插件独立分发](https://github.com/T-miracle/Nanobug-Plugin-Marketplace/issues/1)。
 
 ## What to build
 
@@ -25,8 +25,8 @@
 
 ## Blocked by
 
-- 工单 02：历史版本、下载统计与安全升级提示（发布后替换为真实 issue 引用并建立原生阻塞关系）。
-- 工单 03：七个官方插件独立构建、发布与市场安装（发布后替换为真实 issue 引用并建立原生阻塞关系）。
+- [#3 插件市场 02：历史版本、下载统计与安全升级提示](https://github.com/T-miracle/Nanobug-Plugin-Marketplace/issues/3)
+- [#4 插件市场 03：七个官方插件独立构建、发布与市场安装](https://github.com/T-miracle/Nanobug-Plugin-Marketplace/issues/4)
 
 ## Testing and evidence
 

@@ -1,10 +1,10 @@
 # 01：审核收录到原生市场首次安装
 
-状态：拆分及阻塞关系已获用户批准，待发布本仓库；尚未实施。稳定标识：`plugin-marketplace-v1-01`。
+状态：ready-for-agent，已发布为 [#2](https://github.com/T-miracle/Nanobug-Plugin-Marketplace/issues/2)；尚未实施。稳定标识：`plugin-marketplace-v1-01`。
 
 ## Parent
 
-[执行规格](../specs/plugin-marketplace.md)（本仓库议题待发布；原 Nanobug #100 仅作历史参考）。
+[规格 #1：初版插件市场与官方插件独立分发](https://github.com/T-miracle/Nanobug-Plugin-Marketplace/issues/1)。
 
 ## What to build
 
@@ -25,7 +25,7 @@
 
 ## Blocked by
 
-None (can start immediately)。实际远程仓库/地址/认证按执行阶段登记，不将父规格当作需先关闭的阻塞项。
+None (can start immediately)。父规格不作为需关闭的阻塞项。
 
 ## Testing and evidence
 

@@ -4,61 +4,85 @@
   "date": "2026-10-09",
   "spec": {
     "stable_id": "plugin-marketplace-v1",
-    "id": null,
-    "number": null,
-    "url": null,
+    "labels": [
+      "ready-for-agent"
+    ],
+    "state": "open",
+    "url": "https://github.com/T-miracle/Nanobug-Plugin-Marketplace/issues/1",
+    "id": 5780918352,
     "title": "[Spec] 初版插件市场与官方插件独立分发",
-    "state": "not_published"
+    "number": 1,
+    "body_verified": true
   },
-  "ticket_status": "approved-awaiting-publication",
+  "ticket_status": "published-not-started",
   "test_seam_status": "approved",
   "tickets": [
     {
       "local": 1,
       "stable_id": "plugin-marketplace-v1-01",
       "file": "01-reviewed-install.md",
-      "title": "审核收录到原生市场首次安装",
+      "title": "插件市场 01：审核收录到原生市场首次安装",
       "blocked_by_local": [],
-      "number": null,
-      "id": null,
-      "url": null
+      "number": 2,
+      "id": 5780918778,
+      "url": "https://github.com/T-miracle/Nanobug-Plugin-Marketplace/issues/2",
+      "state": "open",
+      "labels": [
+        "ready-for-agent"
+      ],
+      "body_verified": true
     },
     {
       "local": 2,
       "stable_id": "plugin-marketplace-v1-02",
       "file": "02-versions-updates.md",
-      "title": "历史版本、下载统计与安全升级提示",
+      "title": "插件市场 02：历史版本、下载统计与安全升级提示",
       "blocked_by_local": [
         1
       ],
-      "number": null,
-      "id": null,
-      "url": null
+      "number": 3,
+      "id": 5780919182,
+      "url": "https://github.com/T-miracle/Nanobug-Plugin-Marketplace/issues/3",
+      "state": "open",
+      "labels": [
+        "ready-for-agent"
+      ],
+      "body_verified": true
     },
     {
       "local": 3,
       "stable_id": "plugin-marketplace-v1-03",
       "file": "03-official-distribution.md",
-      "title": "七个官方插件独立构建、发布与市场安装",
+      "title": "插件市场 03：七个官方插件独立构建、发布与市场安装",
       "blocked_by_local": [
         1
       ],
-      "number": null,
-      "id": null,
-      "url": null
+      "number": 4,
+      "id": 5780919898,
+      "url": "https://github.com/T-miracle/Nanobug-Plugin-Marketplace/issues/4",
+      "state": "open",
+      "labels": [
+        "ready-for-agent"
+      ],
+      "body_verified": true
     },
     {
       "local": 4,
       "stable_id": "plugin-marketplace-v1-04",
       "file": "04-unbundled-delivery.md",
-      "title": "取消随附、移除示例并完成 Windows 交付验收",
+      "title": "插件市场 04：取消随附、移除示例并完成 Windows 交付验收",
       "blocked_by_local": [
         2,
         3
       ],
-      "number": null,
-      "id": null,
-      "url": null
+      "number": 5,
+      "id": 5780920290,
+      "url": "https://github.com/T-miracle/Nanobug-Plugin-Marketplace/issues/5",
+      "state": "open",
+      "labels": [
+        "ready-for-agent"
+      ],
+      "body_verified": true
     }
   ],
   "planned_edges": [
@@ -79,7 +103,7 @@
       "blocked_local": 4
     }
   ],
-  "native_edges_applied": false,
+  "native_edges_applied": true,
   "legacy_spec": {
     "repository": "T-miracle/Nanobug",
     "id": 5780683218,
@@ -92,5 +116,58 @@
     ],
     "readback_verified": true
   },
-  "split_status": "approved"
+  "split_status": "approved",
+  "verified_native_edges": [
+    {
+      "blocker_number": 2,
+      "blocker_id": 5780918778,
+      "blocked_number": 3,
+      "verified": true
+    },
+    {
+      "blocker_number": 2,
+      "blocker_id": 5780918778,
+      "blocked_number": 4,
+      "verified": true
+    },
+    {
+      "blocker_number": 3,
+      "blocker_id": 5780919182,
+      "blocked_number": 5,
+      "verified": true
+    },
+    {
+      "blocker_number": 4,
+      "blocker_id": 5780919898,
+      "blocked_number": 5,
+      "verified": true
+    }
+  ],
+  "verified_dependencies": [
+    {
+      "issue": 2,
+      "blocked_by": []
+    },
+    {
+      "issue": 3,
+      "blocked_by": [
+        2
+      ]
+    },
+    {
+      "issue": 4,
+      "blocked_by": [
+        2
+      ]
+    },
+    {
+      "issue": 5,
+      "blocked_by": [
+        3,
+        4
+      ]
+    }
+  ],
+  "repository_id": 1412099490,
+  "initial_pushed_commit": "9cf005046738182dffa1c14b9305e49132c3adba"
 }

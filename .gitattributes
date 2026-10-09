@@ -1,0 +1,4 @@
+# Keep cross-platform planning documents in UTF-8 text with consistent line endings.
+* text=auto
+*.md text eol=lf
+*.json text eol=lf

@@ -1,0 +1,7 @@
+# Keep local credentials, temporary files and machine state out of the registry.
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db

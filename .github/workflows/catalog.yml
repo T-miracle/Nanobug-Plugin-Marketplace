@@ -23,6 +23,13 @@ jobs:
           ref: ${{ github.event.pull_request.base.sha || github.sha }}
           path: trusted
           persist-credentials: false
+      - uses: actions/checkout@v6
+        if: github.event_name == 'push'
+        with:
+          # A direct main push must also preserve already published versions.
+          ref: ${{ github.event.before }}
+          path: previous
+          persist-credentials: false
       - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
@@ -60,6 +67,8 @@ jobs:
           $arguments = @('trusted/marketplace.py', '--registry', 'incoming/registry', '--transfers', 'incoming/transfers', '--output', 'dist')
           if ('${{ github.event_name }}' -eq 'pull_request') {
             $arguments += @('--baseline-dir', 'trusted/registry')
+          } elseif ('${{ github.event_name }}' -eq 'push') {
+            $arguments += @('--baseline-dir', 'previous/registry')
           }
           if ('${{ steps.candidates.outputs.present }}' -eq 'true') {
             $arguments += @('--validator', 'validator/target/debug/examples/inspect_package.exe')

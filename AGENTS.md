@@ -6,7 +6,7 @@
 
 - 先读 [执行规格](docs/specs/plugin-marketplace.md)、[工单与测试安排](docs/tickets/README.md)及当前工单，再检查 git status --short。保留用户和其他任务改动。
 - 议题与真实 ID 以 [发布记录](docs/tickets/publication.json) 和 GitHub 读回状态为准；不能从文档进度推断代码完成。
-- 本仓库初始化阶段只有规划文档，没有可运行市场、构建系统或部署工作流。开始实现时按实际文件确定命令，不编造已存在接口。
+- 目录构建与测试命令见根 README；非空发布必须使用 `.github/validator.json` 固定版本的宿主 Package 校验器。PR 只能提供候选数据，不得以 PR 中的脚本替换可信基线校验器。
 - 修改 Nanobug 宿主或独立插件仓库前，读取该仓库自己的 AGENTS.md、现行规格、调用方及测试；本文件不替代其规则。
 
 ## 仓库职责

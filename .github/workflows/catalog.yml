@@ -1,0 +1,85 @@
+# PRs validate with trusted base-branch code; only reviewed main commits can deploy static data.
+name: Reviewed catalog
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: catalog-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: incoming
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.base.sha || github.sha }}
+          path: trusted
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Test trusted catalog builder
+        working-directory: trusted
+        run: python -m unittest discover -s tests -v
+      - name: Detect candidate records
+        id: candidates
+        shell: pwsh
+        run: |
+          # Only JSON data from the PR is consumed; no incoming code or workflow command executes.
+          $hasEntries = @(Get-ChildItem incoming/registry -Filter '*.json').Count -gt 0
+          "present=$($hasEntries.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
+      - name: Read pinned validator revision
+        if: steps.candidates.outputs.present == 'true'
+        id: validator
+        shell: pwsh
+        run: |
+          $pin = Get-Content trusted/.github/validator.json -Raw | ConvertFrom-Json
+          "revision=$($pin.revision)" >> $env:GITHUB_OUTPUT
+      - uses: actions/checkout@v6
+        if: steps.candidates.outputs.present == 'true'
+        with:
+          repository: T-miracle/Nanobug
+          ref: ${{ steps.validator.outputs.revision }}
+          path: validator
+          persist-credentials: false
+      - name: Build inert Package validator
+        if: steps.candidates.outputs.present == 'true'
+        working-directory: validator
+        run: cargo build --locked -p plugin-runtime --example inspect_package
+      - name: Validate candidate catalog against reviewed records
+        shell: pwsh
+        run: |
+          $arguments = @('trusted/marketplace.py', '--registry', 'incoming/registry', '--transfers', 'incoming/transfers', '--output', 'dist')
+          if ('${{ github.event_name }}' -eq 'pull_request') {
+            $arguments += @('--baseline-dir', 'trusted/registry')
+          }
+          if ('${{ steps.candidates.outputs.present }}' -eq 'true') {
+            $arguments += @('--validator', 'validator/target/debug/examples/inspect_package.exe')
+          }
+          python @arguments
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-pages-artifact@v4
+        if: github.event_name != 'pull_request'
+        with:
+          path: dist
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment

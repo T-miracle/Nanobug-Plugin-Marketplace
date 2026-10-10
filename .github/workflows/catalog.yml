@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  deployments: read
 concurrency:
   group: catalog-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
@@ -23,11 +24,34 @@ jobs:
           ref: ${{ github.event.pull_request.base.sha || github.sha }}
           path: trusted
           persist-credentials: false
+      - name: Resolve last successful catalog deployment
+        if: github.event_name != 'pull_request'
+        id: baseline
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Failed candidate commits never advance the immutable publication baseline.
+          $headers = @{ Authorization = "Bearer $env:GH_TOKEN"; Accept = 'application/vnd.github+json' }
+          $url = "https://api.github.com/repos/${{ github.repository }}/deployments?environment=github-pages&per_page=100"
+          $deployments = @(Invoke-RestMethod -Headers $headers -Uri $url)
+          $revision = ''
+          foreach ($deployment in $deployments) {
+            $statuses = @(Invoke-RestMethod -Headers $headers -Uri $deployment.statuses_url)
+            if ($statuses | Where-Object { $_.state -eq 'success' } | Select-Object -First 1) {
+              $revision = $deployment.sha
+              break
+            }
+          }
+          if ($revision -and $revision -notmatch '^[0-9a-f]{40}$') { throw 'Invalid deployment revision' }
+          if (-not $revision -and ($deployments.Count -ne 0 -or @(Get-ChildItem incoming/registry -Filter '*.json').Count -ne 0)) {
+            throw 'No successful immutable baseline for nonempty catalog'
+          }
+          "revision=$revision" >> $env:GITHUB_OUTPUT
       - uses: actions/checkout@v6
-        if: github.event_name == 'push'
+        if: steps.baseline.outputs.revision != ''
         with:
-          # A direct main push must also preserve already published versions.
-          ref: ${{ github.event.before }}
+          ref: ${{ steps.baseline.outputs.revision }}
           path: previous
           persist-credentials: false
       - uses: actions/setup-python@v6
@@ -67,7 +91,7 @@ jobs:
           $arguments = @('trusted/marketplace.py', '--registry', 'incoming/registry', '--transfers', 'incoming/transfers', '--output', 'dist')
           if ('${{ github.event_name }}' -eq 'pull_request') {
             $arguments += @('--baseline-dir', 'trusted/registry')
-          } elseif ('${{ github.event_name }}' -eq 'push') {
+          } elseif ('${{ steps.baseline.outputs.revision }}' -ne '') {
             $arguments += @('--baseline-dir', 'previous/registry')
           }
           if ('${{ steps.candidates.outputs.present }}' -eq 'true') {

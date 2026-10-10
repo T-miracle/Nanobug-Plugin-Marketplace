@@ -1,6 +1,6 @@
 # 01：审核收录到原生市场首次安装
 
-状态：实现及本地验收进行中；首个第三方 Release 的线上审核/安装仍待候选，见[验收记录](../verification/01-reviewed-install-2026-10-10.md)。已发布为 [#2](https://github.com/T-miracle/Nanobug-Plugin-Marketplace/issues/2)。稳定标识：`plugin-marketplace-v1-01`。
+状态：实现、本地验收与空目录 Pages 部署已完成；首个第三方 Release 的线上审核/安装仍待候选，见[验收记录](../verification/01-reviewed-install-2026-10-10.md)。已发布为 [#2](https://github.com/T-miracle/Nanobug-Plugin-Marketplace/issues/2)。稳定标识：`plugin-marketplace-v1-01`。
 
 ## Parent
 

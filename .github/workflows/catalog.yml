@@ -34,17 +34,23 @@ jobs:
           # Failed candidate commits never advance the immutable publication baseline.
           $headers = @{ Authorization = "Bearer $env:GH_TOKEN"; Accept = 'application/vnd.github+json' }
           $url = "https://api.github.com/repos/${{ github.repository }}/deployments?environment=github-pages&per_page=100"
-          $deployments = @(Invoke-RestMethod -Headers $headers -Uri $url)
           $revision = ''
-          foreach ($deployment in $deployments) {
-            $statuses = @(Invoke-RestMethod -Headers $headers -Uri $deployment.statuses_url)
-            if ($statuses | Where-Object { $_.state -eq 'success' } | Select-Object -First 1) {
-              $revision = $deployment.sha
-              break
+          $page = 1
+          do {
+            # Invoke-RestMethod already returns a JSON array; wrapping it in @() nests it on pwsh 7.
+            $deployments = Invoke-RestMethod -Headers $headers -Uri "$url&page=$page"
+            foreach ($deployment in $deployments) {
+              $statuses = Invoke-RestMethod -Headers $headers -Uri $deployment.statuses_url
+              if ($statuses | Where-Object { $_.state -eq 'success' } | Select-Object -First 1) {
+                $revision = $deployment.sha
+                break
+              }
             }
-          }
+            $page++
+          } while (-not $revision -and $deployments.Count -eq 100)
           if ($revision -and $revision -notmatch '^[0-9a-f]{40}$') { throw 'Invalid deployment revision' }
-          if (-not $revision -and ($deployments.Count -ne 0 -or @(Get-ChildItem incoming/registry -Filter '*.json').Count -ne 0)) {
+          # No published catalog yet: only an empty candidate may bootstrap or retry publication.
+          if (-not $revision -and @(Get-ChildItem incoming/registry -Filter '*.json').Count -ne 0) {
             throw 'No successful immutable baseline for nonempty catalog'
           }
           "revision=$revision" >> $env:GITHUB_OUTPUT
